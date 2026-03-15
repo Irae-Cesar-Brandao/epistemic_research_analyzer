@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Epistemic Research Analyzer</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<!--  ESTILIZAÇÃO CSS -->
+
+<style>
+body{font-family:Arial,Helvetica,sans-serif;background:#121417;color:#e6e6e6;margin:40px}
+
+h1{
+text-align:center;
+margin-bottom:12px
+}
+
+.author{
+text-align:center;
+font-size:14px;
+margin-bottom:30px;
+opacity:.8}
+
+.container{
+max-width:1100px;
+margin:auto
+}
+
+
+.card{
+background:#1c1f24;
+padding:22px;
+border-radius:10px;
+box-shadow:0 6px 18px rgba(0,0,0,.45);
+margin-bottom:22px
+}
+
+.section-title{
+font-weight:bold;
+margin-bottom:10px
+}
+
+label{
+display:block;
+font-weight:bold;
+margin-bottom:4px
+}
+
+input[type=text]{
+width:100%;
+padding:8px;
+border-radius:6px;
+border:none;
+margin-bottom:10px
+}
+
+input[type=range]{
+width:100%
+}
+
+button{
+padding:10px 18px;
+border:none;
+border-radius:6px;
+background:#2b6cb0;
+color:white;cursor:pointer;
+margin-right:10px
+}
+
+button:hover{
+opacity:.9
+}
+
+canvas{
+background:#1c1f24;
+padding:15px;
+border-radius:10px
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:15px
+}
+
+th,td{
+border-bottom:1px solid #333;
+padding:8px;t
+ext-align:center
+}
+
+th{
+background:#20242b
+}
+
+tr:hover{
+background:#262b33;
+cursor:pointer
+}
+
+textarea{
+width:100%;
+height:70px;
+background:#101215;
+color:white;
+border:none;
+padding:10px
+}
+
+.stats{
+margin-top:12px;
+font-size:14px;
+line-height:1.6
+}
+
+.small{
+font-size:13px;
+opacity:.8
+}
+
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:25px
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<h1>Epistemic Research Analyzer (ERA)</h1>
+<div class="author">Autor: Iraê C. Brandão  -  15 Mar. 2026.</div>
+
+<div class="card">
+<div class="section-title">Breve explicação</div>
+<h3> Framework de Monitoramento da Redução de Opacidade Epistemológica em Pesquisa Assistida por IA </h3>
+<p>Este instrumento analítico foi concebido para apoiar processos de pesquisa assistida por inteligência artificial, avaliando a qualidade epistemológica das interações investigativas. O objetivo é reduzir a chamada opacidade epistemológica, situação em que respostas automatizadas são incorporadas ao conhecimento sem reflexão crítica.</p>
+<p>O sistema observa cinco dimensões cognitivas da investigação científica: problematização, exploração informacional, comparação crítica, construção interpretativa e reflexão epistemológica.</p>
+</div>
+
+<div class="card">
+<div class="section-title">Algoritmo de avaliação epistemológica</div>
+
+<p>Cada dimensão recebe pontuação de 0 a 5 e é ponderada conforme sua relevância no processo investigativo.</p>
+
+<pre>
+score =
+(p * 1.2) +
+(e * 1.0) +
+(c * 1.4) +
+(i * 1.6) +
+(r * 1.3)
+</pre>
+
+<p class="small">Pontuação máxima possível = 32.5</p>
+
+<p class="small">O sistema também calcula um índice derivado denominado <b>Índice de Redução de Opacidade Epistemológica (IROE)</b>, representado em escala de 0–100%.</p>
+
+</div>
+
+<div class="card">
+
+<label>Título analisado</label>
+<input id="title" type="text" placeholder="ex: Opacidade epistemológica em IA">
+
+<label>Problematização</label>
+<input type="range" min="0" max="5" value="0" id="problem">
+
+<label>Exploração informacional</label>
+<input type="range" min="0" max="5" value="0" id="exploration">
+
+<label>Comparação crítica</label>
+<input type="range" min="0" max="5" value="0" id="comparison">
+
+<label>Construção interpretativa</label>
+<input type="range" min="0" max="5" value="0" id="interpretation">
+
+<label>Reflexão epistemológica</label>
+<input type="range" min="0" max="5" value="0" id="reflection">
+
+<br><br>
+
+<button onclick="addOrUpdateAnalysis()">Salvar / Atualizar análise</button>
+
+<h3 id="scoreResult"></h3>
+
+<div class="stats" id="stats"></div>
+
+</div>
+
+<div class="card grid">
+
+<div>
+<h2>Radar da análise selecionada</h2>
+<canvas id="radarChart"></canvas>
+</div>
+
+<div>
+<h2>Evolução epistemológica</h2>
+<canvas id="timeChart"></canvas>
+<p class="small">Representa a evolução do Índice de Redução de Opacidade Epistemológica ao longo das análises.</p>
+</div>
+
+</div>
+
+<div class="card">
+<h2>Resultados acumulados</h2>
+
+<table id="resultsTable">
+<thead>
+<tr>
+<th>Título</th>
+<th>P</th>
+<th>E</th>
+<th>C</th>
+<th>I</th>
+<th>R</th>
+<th>Score</th>
+<th>IROE %</th>
+<th>Nível</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+
+<br>
+
+<button onclick="exportFile()">Exportar arquivo JSON</button>
+<button onclick="clearData()">Limpar dados</button>
+
+</div>
+
+<div class="card">
+<h2>Importar arquivo</h2>
+<input type="file" id="fileInput">
+</div>
+
+<div class="card">
+<div class="section-title">Objetivo científico do instrumento</div>
+
+<p>O Epistemic Research Analyzer propõe um mecanismo experimental de monitoramento do comportamento analítico do pesquisador durante investigações assistidas por IA. Ao acumular avaliações sucessivas, torna-se possível observar tendências cognitivas do processo investigativo.</p>
+
+<p>O índice IROE permite avaliar o grau em que a pesquisa supera a simples síntese informacional e avança para interpretação crítica e reflexão epistemológica.</p>
+
+<p>Com a acumulação temporal das análises, o sistema permite identificar padrões como dependência excessiva de respostas automatizadas, baixa densidade interpretativa ou progressiva maturação epistemológica do processo investigativo.</p>
+
+</div>
+
+</div>
+
+
+<!--  ////////////////////////////
+ORIENTAÇÕES SOBRE O  USO DO FRAMEWORK  
+/////////////////////////////////// -->
+
+<div class="framework-explanation">
+
+<style>
+
+.framework-explanation{
+background:#171a1f;
+padding:35px;
+border-radius:12px;
+margin-top:30px;
+line-height:1.6;
+}
+
+.framework-explanation h2{
+text-align:center;
+margin-bottom:20px;
+}
+
+.framework-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:18px;
+margin-top:20px;
+}
+
+.dimension{
+padding:18px;
+border-radius:8px;
+color:white;
+}
+
+.p{background:#2b6cb0;}
+.e{background:#2f855a;}
+.c{background:#805ad5;}
+.i{background:#c05621;}
+.r{background:#b83280;}
+
+.algorithm-box{
+background:#111318;
+padding:20px;
+border-radius:8px;
+margin-top:25px;
+font-family:monospace;
+}
+
+.table-explain{
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+}
+
+.table-explain td,
+.table-explain th{
+border-bottom:1px solid #333;
+padding:10px;
+text-align:left;
+}
+
+.limitations{
+background:#101215;
+padding:18px;
+border-radius:8px;
+margin-top:25px;
+}
+
+.experimental{
+margin-top:18px;
+padding:15px;
+background:#3b1f1f;
+border-radius:8px;
+}
+
+</style>
+
+<h2>Framework de Monitoramento Epistemológico</h2>
+
+<p>
+Este sistema foi projetado para tornar mais visível a qualidade do processo de construção do conhecimento em pesquisas assistidas por inteligência artificial.
+</p>
+
+<p>
+A ferramenta não avalia diretamente a veracidade de uma teoria ou argumento. Em vez disso, ela observa <b>como o pesquisador está investigando</b>, medindo dimensões cognitivas fundamentais do processo científico.
+</p>
+
+<h3>Dimensões do processo investigativo</h3>
+
+<div class="framework-grid">
+
+<div class="dimension p">
+<h4>Problematização</h4>
+Formulação de perguntas relevantes que orientam a investigação.
+Sem um problema claro, a pesquisa tende a se tornar apenas coleta de informações.
+</div>
+
+<div class="dimension e">
+<h4>Exploração informacional</h4>
+Busca, leitura e organização de dados e evidências.
+Inclui examinar criticamente respostas geradas por IA.
+</div>
+
+<div class="dimension c">
+<h4>Comparação crítica</h4>
+Confronto entre teorias, interpretações ou argumentos.
+Evita aceitar uma única explicação sem análise.
+</div>
+
+<div class="dimension i">
+<h4>Construção interpretativa</h4>
+Momento em que o pesquisador transforma informações em entendimento próprio.
+Aqui ocorre a produção real de conhecimento.
+</div>
+
+<div class="dimension r">
+<h4>Reflexão epistemológica</h4>
+Exame crítico do próprio processo de investigação.
+Questiona pressupostos, limites e possíveis erros.
+</div>
+
+</div>
+
+<h3>Algoritmo do modelo</h3>
+
+<div class="algorithm-box">
+
+Score =
+(p × 1.2) +
+(e × 1.0) +
+(c × 1.4) +
+(i × 1.6) +
+(r × 1.3)
+
+</div>
+
+<p>
+Cada dimensão recebe nota entre <b>0 e 5</b>.  
+Essas notas são multiplicadas pelos pesos indicados acima e somadas.
+</p>
+
+<p>
+A pontuação máxima possível é:
+</p>
+
+<div class="algorithm-box">
+
+Score máximo = 32.5
+
+</div>
+
+<p>
+Para facilitar a interpretação, o sistema converte o resultado para uma escala percentual chamada:
+</p>
+
+<h3>IROE — Índice de Redução de Opacidade Epistemológica</h3>
+
+<div class="algorithm-box">
+
+IROE = (Score / 32.5) × 100
+
+</div>
+
+<table class="table-explain">
+
+<tr>
+<th>Faixa</th>
+<th>Interpretação</th>
+</tr>
+
+<tr>
+<td>0 – 30%</td>
+<td>Investigação superficial baseada principalmente em síntese informacional.</td>
+</tr>
+
+<tr>
+<td>30 – 55%</td>
+<td>Investigação informacional com análise limitada.</td>
+</tr>
+
+<tr>
+<td>55 – 80%</td>
+<td>Investigação analítica consistente.</td>
+</tr>
+
+<tr>
+<td>80 – 100%</td>
+<td>Investigação epistemicamente robusta.</td>
+</tr>
+
+</table>
+
+<h3>Interpretação dos gráficos do sistema</h3>
+
+<ul>
+
+<li>
+<b>Radar epistemológico</b><br>
+Mostra visualmente como cada dimensão da investigação foi desenvolvida em uma análise específica.
+</li>
+
+<li>
+<b>Gráfico de evolução</b><br>
+Mostra como o índice IROE evolui ao longo das análises realizadas durante a pesquisa.
+</li>
+
+</ul>
+
+<div class="limitations">
+
+<h3>Limitações do modelo</h3>
+
+<ul>
+
+<li>As pontuações dependem da avaliação feita pelo próprio pesquisador.</li>
+
+<li>Processos cognitivos complexos são simplificados em cinco dimensões.</li>
+
+<li>Os pesos utilizados no algoritmo representam apenas uma proposta teórica inicial.</li>
+
+<li>O índice não substitui revisão por pares nem análise metodológica tradicional.</li>
+
+</ul>
+
+</div>
+
+<div class="experimental">
+
+<h3>Uso experimental</h3>
+
+Este framework é um instrumento experimental de apoio à reflexão metodológica em pesquisas assistidas por inteligência artificial.
+
+Seu objetivo é ajudar pesquisadores a perceber quando estão apenas reorganizando informações existentes e quando estão realmente produzindo interpretações analíticas novas.
+
+O sistema deve ser utilizado como ferramenta de reflexão científica e não como medida definitiva da qualidade de uma investigação.
+
+</div>
+
+</div>
+
+
+<script>
+
+const weights={problem:1.2,exploration:1,comparison:1.4,interpretation:1.6,reflection:1.3}
+
+const MAX_SCORE=32.5
+
+let analyses=JSON.parse(localStorage.getItem("analyses")||"[]")
+
+let radar
+let timeChart
+
+function weightedScore(p,e,c,i,r){
+return (p*weights.problem)+(e*weights.exploration)+(c*weights.comparison)+(i*weights.interpretation)+(r*weights.reflection)
+}
+
+function normalize(score){
+return (score/MAX_SCORE)*100
+}
+
+function classify(percent){
+
+if(percent<30) return "Superficial"
+if(percent<55) return "Intermediário"
+if(percent<80) return "Analítico"
+return "Alta consistência"
+
+}
+
+function addOrUpdateAnalysis(){
+
+let title=document.getElementById("title").value
+
+if(!title){
+alert("Informe um título")
+return
+}
+
+let p=Number(document.getElementById("problem").value)
+let e=Number(document.getElementById("exploration").value)
+let c=Number(document.getElementById("comparison").value)
+let i=Number(document.getElementById("interpretation").value)
+let r=Number(document.getElementById("reflection").value)
+
+let score=weightedScore(p,e,c,i,r)
+let percent=normalize(score)
+let level=classify(percent)
+
+let item={title,p,e,c,i,r,score:score.toFixed(2),percent:percent.toFixed(1),level}
+
+let index=analyses.findIndex(a=>a.title===title)
+
+if(index>=0){
+analyses[index]=item
+}else{
+analyses.push(item)
+}
+
+localStorage.setItem("analyses",JSON.stringify(analyses))
+
+renderTable()
+updateStats()
+updateTimeChart()
+showRadar(item)
+
+}
+
+function renderTable(){
+
+let table=document.querySelector("#resultsTable tbody")
+ table.innerHTML=""
+
+analyses.forEach(a=>{
+
+let row=document.createElement("tr")
+
+row.innerHTML=`
+<td>${a.title}</td>
+<td>${a.p}</td>
+<td>${a.e}</td>
+<td>${a.c}</td>
+<td>${a.i}</td>
+<td>${a.r}</td>
+<td>${a.score}</td>
+<td>${a.percent}%</td>
+<td>${a.level}</td>
+`
+
+row.onclick=()=>showRadar(a)
+
+ table.appendChild(row)
+
+})
+
+}
+
+function showRadar(a){
+
+let data=[a.p,a.e,a.c,a.i,a.r]
+
+if(radar) radar.destroy()
+
+radar=new Chart(document.getElementById("radarChart"),{
+ type:"radar",
+ data:{
+ labels:["Problematização","Exploração","Comparação","Interpretação","Reflexão"],
+ datasets:[{label:a.title,data:data}]
+ },
+ options:{
+ plugins:{legend:{labels:{color:"white"}}},
+ scales:{
+ r:{min:0,max:5,grid:{color:"#444"},angleLines:{color:"#444"},pointLabels:{color:"white"}}
+ }
+ }
+})
+
+}
+
+function updateTimeChart(){
+
+if(timeChart) timeChart.destroy()
+
+let labels=analyses.map((a,i)=>"A"+(i+1))
+let data=analyses.map(a=>a.percent)
+
+ timeChart=new Chart(document.getElementById("timeChart"),{
+ type:"line",
+ data:{labels:labels,datasets:[{label:"IROE %",data:data}]},
+ options:{plugins:{legend:{labels:{color:"white"}}},scales:{y:{min:0,max:100}}}
+ })
+
+}
+
+function updateStats(){
+
+if(analyses.length===0) return
+
+let totalScore=0
+
+analyses.forEach(a=> totalScore+=Number(a.score))
+
+let avgScore=(totalScore/analyses.length)
+let avgPercent=normalize(avgScore)
+
+let text=`Total de análises: ${analyses.length}<br>
+Pontuação média ponderada: ${avgScore.toFixed(2)} / ${MAX_SCORE}<br>
+IROE médio: ${avgPercent.toFixed(1)}%`
+
+ document.getElementById("stats").innerHTML=text
+
+}
+
+function exportFile(){
+
+let data=JSON.stringify(analyses,null,2)
+let blob=new Blob([data],{type:"application/json"})
+let url=URL.createObjectURL(blob)
+
+let a=document.createElement("a")
+a.href=url
+
+a.download="epistemic_analyses.json"
+
+a.click()
+
+}
+
+function clearData(){
+
+if(confirm("Apagar todos os dados?")){
+analyses=[]
+localStorage.removeItem("analyses")
+renderTable()
+updateStats()
+if(radar) radar.destroy()
+if(timeChart) timeChart.destroy()
+}
+
+}
+
+ document.getElementById("fileInput").addEventListener("change",function(e){
+
+let file=e.target.files[0]
+
+if(!file) return
+
+let reader=new FileReader()
+
+reader.onload=function(evt){
+
+let data=JSON.parse(evt.target.result)
+
+analyses=data
+
+localStorage.setItem("analyses",JSON.stringify(analyses))
+
+renderTable()
+updateStats()
+updateTimeChart()
+
+}
+
+reader.readAsText(file)
+
+})
+
+renderTable()
+updateStats()
+updateTimeChart()
+
+</script>
+
+</body>
+  <footer>
+    <hr>
+        © 2026 — Iraê César Brandão - Dev - Página demonstrativa para fins acadêmicos — <a href="license.html">Licença Acadêmica (AREUL)</a>
+  </footer>
+
+</html>
