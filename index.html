@@ -702,6 +702,32 @@ renderTable()
 updateStats()
 updateTimeChart()
 
+
+<script>
+    function redirectToLicense() {
+      // Option 1: Local LICENSE file
+      window.location.href = "license_areul.html";
+
+      // Option 2 (alternative):
+      // window.location.href = "license_areul.html";
+    }
+
+/* ======      TRAVAR A CÓPIA CONTEÚDO COM REF. AUTOR========*/
+// ---------- BLOQUEAR CLIQUE DIREITO ----------
+document.addEventListener('contextmenu', function(e) {
+    e.preventDefault(); // Bloqueia o menu do botão direito
+    alert("Copiar conteúdo não é permitido sem referência ao autor '© 2026 Iraê César Brandão - https://luckway.com.br' .");
+});
+
+// ---------- BLOQUEAR CTRL+C E CTRL+X ----------
+document.addEventListener('keydown', function(e) {
+    if (e.ctrlKey && (e.key === 'c' || e.key === 'x')) {
+        e.preventDefault(); // Bloqueia copiar e recortar
+        alert("Copiar/Recortar desativado. Cite o autor! '© 2026 Iraê César Brandão - https://luckway.com.br'");
+    }
+});
+</script>
+
 </script>
 
 </body>
